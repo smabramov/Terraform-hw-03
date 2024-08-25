@@ -55,7 +55,7 @@ variable "each_vm" {
 
 ### Решение
 
-Файл [count-vm.tf]()
+Файл [count-vm.tf](https://github.com/smabramov/Terraform-hw-03/blob/85b34d394a8fe9737c491498c0d763e87bcb942e/count-vm.tf)
 
 ```
 data "yandex_compute_image" "ubuntu-2004-lts" {
@@ -100,9 +100,9 @@ resource "yandex_compute_instance" "example" {
 }
 
 ```
-![2]()
+![2](https://github.com/smabramov/Terraform-hw-03/blob/85b34d394a8fe9737c491498c0d763e87bcb942e/jpeg/2.png)
 
-Файл [for_each-vm.tf]() и переменая each_vm в [variables.tf]()
+Файл [for_each-vm.tf](https://github.com/smabramov/Terraform-hw-03/blob/85b34d394a8fe9737c491498c0d763e87bcb942e/for_each-vm.tf) и переменая each_vm в [variables.tf](https://github.com/smabramov/Terraform-hw-03/blob/85b34d394a8fe9737c491498c0d763e87bcb942e/variables.tf)
 
 ```
 resource "yandex_compute_instance" "second" {
@@ -172,9 +172,9 @@ variable "each_vm" {
 
 ```
 
-Добавим в [count-vm.tf]() атрибут depends_on = [yandex_compute_instance.second], чтобы данный ресурс создавался после вторых ВМ
+Добавим в [count-vm.tf](https://github.com/smabramov/Terraform-hw-03/blob/85b34d394a8fe9737c491498c0d763e87bcb942e/count-vm.tf) атрибут depends_on = [yandex_compute_instance.second], чтобы данный ресурс создавался после вторых ВМ
 
-Файл [locals.tf]()
+Файл [locals.tf](https://github.com/smabramov/Terraform-hw-03/blob/85b34d394a8fe9737c491498c0d763e87bcb942e/locals.tf)
 
 ```
 locals {
@@ -183,7 +183,7 @@ locals {
 
 ```
 
-![3]()
+![3](https://github.com/smabramov/Terraform-hw-03/blob/85b34d394a8fe9737c491498c0d763e87bcb942e/jpeg/3.png)
 
 
 ### Задание 3
@@ -195,9 +195,9 @@ locals {
 
 ### Решение
 
-![4]()
+![4](https://github.com/smabramov/Terraform-hw-03/blob/85b34d394a8fe9737c491498c0d763e87bcb942e/jpeg/4.png)
 
-![5]()
+![5](https://github.com/smabramov/Terraform-hw-03/blob/85b34d394a8fe9737c491498c0d763e87bcb942e/jpeg/5.png)
 
 ### Задание 4
 
@@ -227,13 +227,13 @@ storage ansible_host=<внешний ip-адрес> fqdn=<полное доме�
 
 ### Решение
 Файлы:
-[inventory.tftpl]()
-[ansible.tf]()
-[test.yaml]()
+[inventory.tftpl](https://github.com/smabramov/Terraform-hw-03/blob/85b34d394a8fe9737c491498c0d763e87bcb942e/inventory.tftpl)
+[ansible.tf](https://github.com/smabramov/Terraform-hw-03/blob/85b34d394a8fe9737c491498c0d763e87bcb942e/ansible.tf)
+[test.yaml](https://github.com/smabramov/Terraform-hw-03/blob/85b34d394a8fe9737c491498c0d763e87bcb942e/test.yaml)
 
  Получившийся файл  inventory.cfg
 
-![6]()
+![6](https://github.com/smabramov/Terraform-hw-03/blob/85b34d394a8fe9737c491498c0d763e87bcb942e/jpeg/6.png)
 
 ------
 
