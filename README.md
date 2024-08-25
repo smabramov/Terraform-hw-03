@@ -53,12 +53,151 @@ variable "each_vm" {
 
 ------
 
+### Решение
+
+Файл [count-vm.tf]()
+
+```
+data "yandex_compute_image" "ubuntu-2004-lts" {
+  family = "ubuntu-2004-lts"
+}
+
+resource "yandex_compute_instance" "example" {
+  count = var.count_vm.count
+  depends_on = [yandex_compute_instance.second]
+  name        = "${var.count_vm.name}-${count.index + 1}"
+  platform_id = var.count_vm.platform_id
+
+  resources {
+    cores         = var.count_vm.cores
+    memory        = var.count_vm.memory
+    core_fraction = var.count_vm.core_fraction
+    
+  }
+
+  boot_disk {
+    initialize_params {
+      image_id = data.yandex_compute_image.ubuntu-2004-lts.image_id
+      type     = var.vm_disks_cuontvm.type
+      size     = var.vm_disks_cuontvm.size
+    }
+  }
+
+  metadata = local.vms_metadata
+
+  
+
+   scheduling_policy { preemptible = var.sh_pol }
+
+  network_interface {
+
+    subnet_id          = yandex_vpc_subnet.develop.id
+    security_group_ids = [yandex_vpc_security_group.example.id]
+    nat                = var.vm_nat
+  }
+  
+  allow_stopping_for_update = var.allow_stopping
+}
+
+```
+![2]()
+
+Файл [for_each-vm.tf]() и переменая each_vm в [variables.tf]()
+
+```
+resource "yandex_compute_instance" "second" {
+  for_each = toset (keys({for i, r in var.each_vm:  i => r}) )
+  
+name = var.each_vm[each.value]["vm_name"]
+
+   resources {
+    cores         = var.each_vm[each.value]["cpu"]
+    memory        = var.each_vm[each.value]["ram"]
+    core_fraction = var.each_vm[each.value]["core_fraction"]
+  }
+
+  boot_disk {
+    initialize_params {
+      image_id = data.yandex_compute_image.ubuntu-2004-lts.image_id
+      type     = var.vm_disks_cuontvm.type
+      size     =  var.each_vm[each.value]["disk_volume"]
+    }
+  }
+
+  metadata = local.vms_metadata
+
+   scheduling_policy { preemptible = var.sh_pol }
+
+  network_interface {
+
+    subnet_id          = yandex_vpc_subnet.develop.id
+    security_group_ids = [yandex_vpc_security_group.example.id]
+    nat                = var.vm_nat
+  }
+  allow_stopping_for_update = var.allow_stopping
+}
+
+```
+
+```
+variable "count_vm" {
+  default = { name = "web", cores = 2, memory = 1, core_fraction = 20,  platform_id = "standard-v1", count = 2}
+}
+
+variable "each_vm" {
+  description = "eachvm_parameters"
+  type = list(object({
+    vm_name     = string,
+    cpu         = number,
+    ram         = number,
+    disk_volume = number,
+    core_fraction = number
+  }))
+  default = [ {
+    vm_name     = "main"
+    cpu         = 4
+    ram         = 2
+    disk_volume = 5
+    core_fraction = 5
+
+    },
+    {
+      vm_name     = "replica"
+      cpu         = 2
+      ram         = 1
+      disk_volume = 8
+      core_fraction = 5
+  }]
+}
+
+```
+
+Добавим в [count-vm.tf]() атрибут depends_on = [yandex_compute_instance.second], чтобы данный ресурс создавался после вторых ВМ
+
+Файл [locals.tf]()
+
+```
+locals {
+  ssh = "${"ubuntu"}:${file("~/.ssh/id_ed25519.pub")}"
+}
+
+```
+
+![3]()
+
+
 ### Задание 3
 
 1. Создайте 3 одинаковых виртуальных диска размером 1 Гб с помощью ресурса yandex_compute_disk и мета-аргумента count в файле **disk_vm.tf** .
 2. Создайте в том же файле **одиночную**(использовать count или for_each запрещено из-за задания №4) ВМ c именем "storage"  . Используйте блок **dynamic secondary_disk{..}** и мета-аргумент for_each для подключения созданных вами дополнительных дисков.
 
 ------
+
+### Решение
+
+![4]()
+
+![5]()
 
 ### Задание 4
 
@@ -85,6 +224,16 @@ storage ansible_host=<внешний ip-адрес> fqdn=<полное доме�
 
 Для общего зачёта создайте в вашем GitHub-репозитории новую ветку terraform-03. Закоммитьте в эту ветку свой финальный код проекта, пришлите ссылку на коммит.   
 **Удалите все созданные ресурсы**.
+
+### Решение
+Файлы:
+[inventory.tftpl]()
+[ansible.tf]()
+[test.yaml]()
+
+ Получившийся файл  inventory.cfg
+
+![6]()
 
 ------
 
